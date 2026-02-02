@@ -27,34 +27,34 @@ Let's break down the script for clear understanding and chocies made:
  ```python
 import time
 import signal
-
+```
 time → used for timing the control loop
 signal → used to catch Ctrl+C (SIGINT) so the program can shut down gracefully
 
 ```python
 from lerobot.teleoperators.so_leader.config_so_leader import SOLeaderTeleopConfig
 from lerobot.teleoperators.so_leader.so_leader import SO101Leader
-
+```
 Imports the leader robot configuration class and the leader robot interface.
 
 ```python
 from lerobot.robots.so_follower.config_so_follower import SOFollowerRobotConfig
 from lerobot.robots.so_follower.so_follower import SO101Follower
-
+```
 Same idea, but foe the follower robot.
 
 # Control Loop Setting
 ```python
 CONTROL_RATE = 50.0
 DT = 1.0 / CONTROL_RATE
-
+```
 The loop should run at 50 Hz
 DT is the time per loop interation-> 0.02 seconds
 
 # Running Flag
 ```python
 running = True
-
+```
 A global boolean used to stop the loop when Ctrl+C is pressed.
 
 # Interrupt Handler
@@ -63,14 +63,16 @@ def handle_interrupt(sig, frame):
     global running
     print("\n[teleop] Stopping…")
     running = False
-
+```
 (This function is called when the user presses Ctrl+C)
 It sets = False, which will break the main loop.
 ```python
 signal.signal(signal.SIGINT, handle_interrupt)
+```
 Registers the handler so the program catches Ctrl+C instead of crashing
 
 # main() Function
+
 # Create Leader Config
 ```python
 print("[teleop] Creating leader config…")
@@ -78,7 +80,7 @@ leader_cfg = SOLeaderTeleopConfig(
     port="/dev/tty.usbmodem5AE60555481",
     use_degrees=False,
 )
-
+```
 Creates a configuration object for the leader robot
 Specifies which USB serial Port it's connected to 
 use_degrees=False -> joint angles will be in radians
@@ -91,6 +93,7 @@ follower_cfg = SOFollowerRobotConfig(
     use_degrees=False,
     cameras={},
 )
+```
 Same idea, but for the follower robot.
 cameras={} means no cameras at this time
 
@@ -99,17 +102,18 @@ cameras={} means no cameras at this time
 print("[teleop] Initializing leader and follower…")
 leader = SO101Leader(leader_cfg)
 follower = SO101Follower(follower_cfg)
-
+```
 creates actual robot interface objects using the configs.
 
 # Connect to Robot
 ```python
 print("[teleop] Connecting leader…")
 leader.connect()
+```
 ```python
 print("[teleop] Connecting follower…")
 follower.connect()
-
+```
 Opens communication with each robot.
 
 # User Instructions
@@ -117,25 +121,25 @@ Opens communication with each robot.
 print("[teleop] Teleoperation running.")
 print("         Move the leader arm to control the follower.")
 print("         Press Ctrl+C to stop.\n")
-
+```
 Just console output
 
 # Main Control Loop
 ```python
 while running:
-
+```
 Runs until Ctrl+C sets running = False
 
 # Start Loop Timer
 ```python
 loop_start = time.time()
-
+```
 Used to maintain the 50 Hz rate.
 
 Read Leader Action
 ```python
 action = leader.get_action()
-
+```
 This is the key step:
 Reads the leader's current joint positions
 Returns a dictionary like:
@@ -145,11 +149,11 @@ Returns a dictionary like:
     "shoulder_lift.pos": -0.45,
     ...
 }
-
+```
 # Send Action to Follower
 ```python
 follower.send_action(action)
-
+```
 Sends the same joint positions to the follower robot.
 This is what makes the follower mimic the leader.
 
@@ -159,7 +163,7 @@ elapsed = time.time() - loop_start
 sleep = DT - elapsed
 if sleep > 0:
     time.sleep(sleep)
-
+```
 Measures how long the iteration took
 Calculates how much time is left until 1/50th of a second passed
 Sleeps the remaining time
@@ -170,14 +174,14 @@ Ensures the loop runs at a stable 50 Hz
 print("[teleop] Done.")
 follower.disconnect()
 leader.disconnect()
-
+```
 Disconnects both robots cleanly.
 
 # Script Entry Point
 ```python
 if __name__ == "__main__":
     main()
-
+```
 Runs main() only if the script is executed directly.
 
 
