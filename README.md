@@ -77,7 +77,7 @@ Registers the handler so the program catches Ctrl+C instead of crashing
 ```python
 print("[teleop] Creating leader config…")
 leader_cfg = SOLeaderTeleopConfig(
-    port="/dev/tty.usbmodem5AE60555481",
+    port="/dev/tty.usbmodem5AE6055****",# place your usbmodem # here
     use_degrees=False,
 )
 ```
@@ -89,7 +89,7 @@ use_degrees=False -> joint angles will be in radians
 ```python
 print("[teleop] Creating follower config…")
 follower_cfg = SOFollowerRobotConfig(
-    port="/dev/tty.usbmodem5AE60558601",
+    port="/dev/tty.usbmodem5AE6055****",# place your usbmodem # here
     use_degrees=False,
     cameras={},
 )
