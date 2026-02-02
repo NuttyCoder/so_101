@@ -1,4 +1,6 @@
 # so_101
+![Build](https://img.shields.io/badge/build-passing-brightgreen)
+
 Lerobot So-101 Robotic Arm
 
 Object is to connects two robot arms:
