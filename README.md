@@ -1,4 +1,5 @@
-# so_101
+# SO-101 Robotic Arm
+
 ![Build](https://img.shields.io/badge/build-passing-brightgreen)
 
 Lerobot So-101 Robotic Arm
